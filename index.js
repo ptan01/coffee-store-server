@@ -27,8 +27,33 @@ async function run() {
     await client.connect();
 
     const coffeeCollection = client.db("coffeeDB").collection('coffee')
+    const orderCollection = client.db('coffeeDB').collection('order')
+
+    // order api routes
 
 
+    app.get('/order', async(req, res)=> {
+      let query = {}
+      if(req.query?.email){
+        query = {email : req.query.email}
+      }
+      const result = await orderCollection.find(query).toArray()
+      res.send(result)
+      console.log(query)
+    })
+
+    app.post('/order', async(req, res)=> {
+        const order = req.body ;
+        const result = await orderCollection.insertOne(order)
+
+        res.send(result)
+        console.log(order) 
+    })
+
+
+
+
+    // coffee api routes
     app.get('/coffee', async(req, res)=>{
       const cursor = coffeeCollection.find()
       const result = await cursor.toArray()
